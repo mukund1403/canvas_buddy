@@ -7,6 +7,9 @@ const flash = require('express-flash')
 const session = require('express-session')
 const passport = require('passport')
 
+//TeleBot
+const TeleBot = require('./teleBot')
+
 const authenticationRouter = require('./routes/authentication')
 const indexRouter = require('./routes/index')
 const nusmodsRouter = require('./routes/nusmods')
