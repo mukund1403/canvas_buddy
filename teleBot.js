@@ -5,10 +5,11 @@ const bodyParser = require('body-parser');
 const database = require('./databases')
 const mysql = require('mysql')
 const telegramBot = require('node-telegram-bot-api')
+require('dotenv').config()
 
 const port = 8080;
 const url = 'https://api.telegram.org/bot';
-const apiToken = ''; //REMOVED
+const apiToken = process.env.TELEBOT_API_TOKEN ;
 
 const bot = new telegramBot (apiToken, {polling:true})
 let reminder;
@@ -90,12 +91,27 @@ bot.onText(/\/search/,(msg,match)=>{
 });
 
 bot.onText(/\/search2/, (msg) => {
-
-    bot.sendMessage(msg.chat.id, "Welcome", {
-    "reply_markup": {
-        "keyboard": [["Sample text", "Second sample"],   ["Keyboard"], ["I'm robot"]]
+    const sql = "SELECT moduleCode FROM userbase.users";
+    database.query(sql, function(err, results) {
+        if(err) console.log(err);
+        console.log(results);
+        
+        for (const result of results) { // each row
+            bot.sendMessage(
+                msg.chat.id,
+                `The exam date for ${result.moduleCode} is ${result.examDate}`
+                )
         }
+
+        results        
+
+        bot.sendMessage(msg.chat.id, "Welcome", {
+            "reply_markup": {
+                "keyboard": [["Sample text", "Second sample"],   ["Keyboard"], ["I'm robot"]]
+                }
+            });
     });
+    
     
     });
 
