@@ -61,6 +61,13 @@ bot.on('message',(msg)=>{
  
 });
 
+bot.onText(/\/help/, (msg) => {
+    bot.sendMessage(msg.chat.id, `Sure, No problem!
+    Type /search to search for a particular module
+    Type /search2 for a pop-up window with all your modules
+    Type /exams to see all your exam dates`)
+});
+
 bot.onText(/\/search/,(msg,match)=>{
     bot.sendMessage(
       msg.chat.id,
@@ -90,24 +97,40 @@ bot.onText(/\/search/,(msg,match)=>{
         }) 
 });
 
-bot.onText(/\/search2/, (msg) => {
-    const sql = "SELECT moduleCode FROM userbase.users";
+bot.onText(/\/exams/, (msg) => {
+    const sql = "SELECT moduleCode, examDate FROM userbase.users";
     database.query(sql, function(err, results) {
         if(err) console.log(err);
         console.log(results);
-        
+        let i = 0
         for (const result of results) { // each row
             bot.sendMessage(
                 msg.chat.id,
                 `The exam date for ${result.moduleCode} is ${result.examDate}`
                 )
+            
         }
+    });
+});
 
-        results        
-
-        bot.sendMessage(msg.chat.id, "Welcome", {
+bot.onText(/\/search2/, (msg) => {
+    const sql = "SELECT moduleCode FROM userbase.users";
+    database.query(sql, function(err, results) {
+        if(err) console.log(err);
+        console.log(results);
+        //let i = 0
+        //bot.sendMessage(msg.chat.id,`${results[1].moduleCode}`)
+        /*
+        for (const result of results) { // each row
+            bot.sendMessage(
+                msg.chat.id,
+                `The exam date for ${result.moduleCode} is ${result.examDate}`
+                )
+        }       
+        */
+        bot.sendMessage(msg.chat.id, "Click for exam dates", {
             "reply_markup": {
-                "keyboard": [["Sample text", "Second sample"],   ["Keyboard"], ["I'm robot"]]
+                "keyboard": [[`${results[0].moduleCode}`, `${results[1].moduleCode}`],   [`${results[2].moduleCode}`], [`${results[3].moduleCode}`], [`${results[4].moduleCode}`]]
                 }
             });
     });
