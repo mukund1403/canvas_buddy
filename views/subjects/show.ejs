@@ -1,6 +1,8 @@
-<h2><%=module_code%></h2>
-<ul>
-    <li><a href="/subjects/<%=module_code%>/assignments" >Assignments</a></li>
-    <li>Exams</li>
-    <li>Tutorials/Classes</li>
-</ul>
+<div class="dashboard">
+    <h1 class="dashboard-title"><%=module_code%></h1>
+    <div class="subject-contents">
+        <h2><a href="/subjects/<%=module_code%>/assignments"><div><ion-icon name="pencil"></ion-icon></div><span>Assignments</span></a></h2>
+        <h2><a href="/subjects/<%=module_code%>/exams"><div><ion-icon name="newspaper"></ion-icon></div><span>Exams</span></a></h2>
+        <h2><a href="/subjects/<%=module_code%>/classes"><div><ion-icon name="laptop"></ion-icon></div><span>Classes</span></a></h2>
+    </div>
+</div>

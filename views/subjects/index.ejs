@@ -1,7 +1,17 @@
-<h2>Modules</h2>
-<% if(subjects.length > 0){ %>
-    <% subjects.forEach(subject =>{ %>
-        <div><a href="/subjects/<%=subject.module_code%>"> <%=subject.name%> </a></div>
-    <%})}else{%>
-        <div>No Modules</div>
-    <%}%>
+<div class="subject-index">
+    <h2 class="subject-title">Modules</h2>
+    <div class="subject-list">
+        
+            <% if(subjects.length> 0){ %>
+                <% subjects.forEach(subject=>{ %>
+                    <div><a href="/subjects/<%=subject.module_code%>">
+                            <%=subject.name%>
+                        </a></div>
+                    <%})} else{%>
+                        <div>No Modules</div>
+                        <%}%>
+      
+    </div>
+</div>
+
+

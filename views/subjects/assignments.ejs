@@ -1,25 +1,57 @@
-<h2>Assignments for <%=module_code%></h2>
-<% if (assignments.length > 0){ %>
-    <div>
-        <h3>Upcoming Assignments</h3>
-        <% assignments.forEach(assignment => { %>
-            <% if (assignment.days_left >= 0) { %>
-                <div> <%=assignment.assignment_name%> <%=assignment.formatted_date%> <%=assignment.days_left_tag%> </div>
-            <% } %>
-        <%}) %>
-    </div>
-    <br/>
-    <div>
-        <h3>Past Assignments</h3>
-        <% assignments.forEach(assignment => { %>
-            <% if (assignment.days_left < 0) { %>
-                <div> <%=assignment.assignment_name%> <%=assignment.formatted_date%> <%=assignment.days_left_tag%> </div>
-            <% } %>
-        <%}) %>
-    </div>
+<div class="assignment-wrapper">
+    <h2 class="assignment-header">Assignments for <%=module_code%></h2>
+    <% if (assignments.length > 0){ %>
+        <h3 class="assignment-heading">Upcoming Assignments</h3>
+        
+        <table>
+            <thead>
+                <tr>
+                    <th> Assignment Name</th>
+                    <th> Due Date </th>
+                    <th> Days Left </th>
+                </tr>
+            </thead>
+            <tbody>
+                <% assignments.forEach(assignment=> { %>
+                    <% if (assignment.days_left>= 0) { %>
+                        <tr 
+                            class="<%=assignment.days_left === 0 ? "due-today" : assignment.days_left <= 3 ? "due-3" : '' %>" 
+                        >
+                            <td><%=assignment.assignment_name%></td>
+                            <td><%=assignment.formatted_date%></td>
+                            <td><%=assignment.days_left_tag%></td>
+                        </tr>
+                        <% } %>
+                    <%}) %>
+            </tbody>
+        </table>
     
-    <%}else { %>
-    <div>No assignments</div>
-<%}%>
-<br/>
-<%- include('./back_button.ejs',{module_code:module_code})%>
+        <br/><br/>
+
+        <h3 class="assignment-heading">Past Assignments</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th> Assignment Name</th>
+                    <th> Due Date </th>
+                    <th> Days Left </th>
+                </tr>
+            </thead>
+            <tbody>
+                <% assignments.forEach(assignment => { %>
+                    <% if (assignment.days_left < 0) { %>
+                        <tr> 
+                            <td><%=assignment.assignment_name%></td>
+                            <td><%=assignment.formatted_date%></td>
+                            <td><%=assignment.days_left_tag%></td>
+                            
+                        </tr>
+                    <% } %>
+                <%}) %>
+            </tbody>
+        </table>
+        
+        <%}else { %>
+        <div>Yay! No assignments</div>
+    <%}%>
+    </div>

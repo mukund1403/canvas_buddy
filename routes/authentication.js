@@ -5,7 +5,7 @@ const checkAuthentication = require('./partials/checkAuthentication')
 const bcrypt = require('bcrypt')
 const passport = require('passport')
 
-//const users = []
+
 const initializePassport = require('../passport-config')
 
 initializePassport(passport,
@@ -26,6 +26,11 @@ router.use((req,res,next)=>{
     next()
 })
 
+router.use(function(req, res, next) {
+    res.set('Cache-Control', 'no-cache, private, no-store, must-revalidate, max-stale=0, post-check=0, pre-check=0');
+    next();
+  });
+
 router.get('/',checkAuthentication.checkNotAuthenticated,(req,res)=>{
     res.render('authentication/login') 
 })
@@ -33,6 +38,10 @@ router.get('/',checkAuthentication.checkNotAuthenticated,(req,res)=>{
 router.get('/register',checkAuthentication.checkNotAuthenticated,(req,res)=>{
     const errorMessage = req.query.errorMessage
     res.render('authentication/register',{errorMessage:errorMessage}) 
+})
+
+router.get('/generateToken',checkAuthentication.checkNotAuthenticated,(req,res)=>{
+    res.render('authentication/generateToken')
 })
 
 router.post('/register', checkAuthentication.checkNotAuthenticated, async(req,res)=>{
@@ -65,12 +74,12 @@ router.post('/register', checkAuthentication.checkNotAuthenticated, async(req,re
 })
 
 router.post('/authentication', checkAuthentication.checkNotAuthenticated, passport.authenticate('local',{
-    successRedirect: '/index',
+    successRedirect: '/index?loggedIn=' + encodeURIComponent('yes'),
     failureRedirect: '/',
     failureFlash: true
 }))
 
-router.delete('/logout', (req, res) => {
+router.delete('/logout', async (req, res,next) => {
     req.logOut((err) => {
         if (err) {
             return next(err)
@@ -152,5 +161,9 @@ async function fetchCourses(user_id, access_token,res) {
         )
     }
 }
+
+
+
+
 
 module.exports = router

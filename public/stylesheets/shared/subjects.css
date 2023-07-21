@@ -1,0 +1,59 @@
+:root{
+    --color-base-hue: 280;
+    --color-btn-base-hue: 279;
+    --color-danger-hue-offset:180;
+    --color-danger-hue: calc(var(--color-base-hue) - var(--color-danger-hue-offset));
+    --color-background-dark: hsl(var(--color-base-hue),100%,10%);
+    --color-background-light: hsl(var(--color-base-hue),100%,20%);
+    --color-text: rgba(255, 255, 255, 0.818);
+    --color-btn-primary-dark: hsl(var(--color-btn-base-hue),100%,10%);
+    --color-btn-primary-light: hsl(var(--color-btn-base-hue),100%,20%);
+}
+
+.subject-index{
+    display: flex;
+    flex-direction: column;
+}
+
+.subject-title{
+    font-size: 2.5rem;
+    position: fixed;
+    top: 5px;
+    left: 730px;
+}
+
+.subject-list{
+    position: fixed;
+    top: 75px;
+    left: 450px;
+    padding: 2.5rem;
+}
+
+.subject-list div{
+    font-size: 1.5rem;
+    padding-bottom: 1rem;
+    margin: 1rem;
+    transition: all 0.2s ease-in-out;
+    text-align: center;
+}
+
+.subject-list a{
+    text-decoration: none;
+    color: var(--color-text);
+    
+}
+
+.subject-list div:hover{
+    transform: scale(1.1);
+}
+
+.subject-contents{
+    position: fixed;
+    top: 100px;
+    left:15px;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    
+}

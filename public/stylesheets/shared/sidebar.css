@@ -1,0 +1,129 @@
+:root{
+    --color-base-hue: 280;
+    --color-btn-base-hue: 279;
+    --color-danger-hue-offset:180;
+    --color-danger-hue: calc(var(--color-base-hue) - var(--color-danger-hue-offset));
+    --color-background-dark: hsl(var(--color-base-hue),100%,10%);
+    --color-background-light: hsl(var(--color-base-hue),100%,20%);
+    --color-text: rgba(255, 255, 255, 0.818);
+    --color-btn-primary-dark: hsl(var(--color-btn-base-hue),100%,10%);
+    --color-btn-primary-light: hsl(var(--color-btn-base-hue),100%,20%);
+}
+
+.menu-toggle {
+	display: none;
+	position: fixed;
+	top: 2rem;
+	right: 2rem;
+	width: 60px;
+	height: 60px;
+	border-radius: 99px;
+	background-color: #1e1f20;
+	cursor: pointer;
+}
+
+.hamburger {
+	position: relative;
+	top: calc(50% - 2px);
+	left: 50%;
+	transform: translate(-50%, -50%);
+	width: 32px;
+}
+
+.hamburger > span,
+.hamburger > span::before,
+.hamburger > span::after {
+  display: block;
+  position: absolute;
+  width: 100%;
+  height: 4px;
+  border-radius: 99px;
+  background-color: #FFF;
+  transition-duration: .25s;
+}
+
+.hamburger > span::before {
+  content: '';
+  top: -8px;
+}
+.hamburger > span::after {
+  content: '';
+  top: 8px;
+}
+
+.menu-toggle.is-active .hamburger > span {
+    transform: rotate(45deg);
+  }
+  .menu-toggle.is-active .hamburger > span::before {
+    top: 0;
+    transform: rotate(0deg);
+  }
+  .menu-toggle.is-active .hamburger > span::after {
+    top: 0;
+    transform: rotate(90deg);
+  }
+
+.sidebar{
+    flex: 1 1 0;
+    max-width: 200px;
+    padding: 2rem 1rem;
+    background-color: #333335;
+    margin: none;
+}
+
+.sidebar h3{
+    color: #707793;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    margin-bottom: 0.5em;
+}
+
+.sidebar .menu{
+    margin: 0 -1rem;
+}
+
+.sidebar .menu .menu-item{
+    display: block;
+    padding: 1em;
+    text-decoration: none;
+    transition: 0.2s linear;
+    color: white;
+}
+
+.sidebar .menu .menu-item:hover,
+.sidebar .menu .menu-item.is-active {
+	color: #3bba9c;
+	border-right: 5px solid #3bba9c;
+}
+
+.sidebar .menu .menu-item:hover {
+	border-right: 5px solid #3bba9c;
+}
+
+@media (max-width: 1024px) {
+	.sidebar {
+		max-width: 200px;
+	}
+}
+
+@media (max-width: 768px) {
+	.menu-toggle {
+		display: block;
+	}
+	.content {
+		padding-top: 8rem;
+	}
+	.sidebar {
+		position: fixed;
+		top: 0;
+		left: -300px;
+		height: 100vh;
+		width: 100%;
+		max-width: 300px;
+		transition: 0.2s linear;
+	}
+
+	.sidebar.is-active {
+		left: 0;
+	}
+}

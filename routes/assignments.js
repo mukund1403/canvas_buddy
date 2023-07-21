@@ -5,18 +5,22 @@ const checkAuthentication = require('./partials/checkAuthentication')
 const passport = require('passport')
 const initializePassport = require('../passport-config')
 initializePassport(passport,
-    async(email) =>  await database.query(
+    async (email) => await database.query(
         `SELECT *
         FROM users
-        WHERE email = ?`,[email]
+        WHERE email = ?`, [email]
     ),
-    async(id) => await database.query(
+    async (id) => await database.query(
         `SELECT user_id
         FROM users
-        WHERE user_id = ?`,[id]
+        WHERE user_id = ?`, [id]
     )
-    )
+)
 
+router.use(function(req, res, next) {
+    res.set('Cache-Control', 'no-cache, private, no-store, must-revalidate, max-stale=0, post-check=0, pre-check=0');
+    next();
+  });
 
 router.get('/',checkAuthentication.checkAuthenticated, async (req,res)=>{
     try{
@@ -29,7 +33,7 @@ router.get('/',checkAuthentication.checkAuthenticated, async (req,res)=>{
             ORDER BY due_date`,[user_id,0]
         )
         findDaysLeft(assignments)
-        res.render("assignments/allAssignments",{assignments:assignments,})
+        res.render("assignments/allAssignments",{assignments:assignments, route:assignments})
     }catch(err){
         res.redirect('/subjects')
         console.log(err)
@@ -52,6 +56,10 @@ function findDaysLeft(assignments){
         
         if (days_left === 0) assignment['days_left_tag'] = 'Due today!'
         else if(days_left < 0) assignment['days_left_tag'] = 'Past Deadline!'
+        else if(year - parseInt(date_arr[2])> 0){
+            assignment['days_left'] = -365
+            assignment['days_left_tag'] = 'Past Deadline!'
+        }
         else assignment['days_left_tag'] = days_left
         return assignments
     })

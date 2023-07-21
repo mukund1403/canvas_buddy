@@ -4,19 +4,36 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+    <link rel="stylesheet" href="/stylesheets/main.css">
     <title>Canvas Buddy</title>
 </head>
 <body>
-    <div>
-        <div>
+    <div class="app">
+        <div class="menu-toggle">
+			<div class="hamburger">
+				<span></span>
+			</div>
+		</div>
+        <aside class="sidebar">
             <%- include('../partials/header.ejs')%>
             <%- include('../partials/logout.ejs')%>
-        </div>
+        </aside>
             
         <div>
             <%- body%>
         </div>
-        
     </div>
+
+    <script>
+        const menu_toggle = document.querySelector('.menu-toggle');
+        const sidebar = document.querySelector('.sidebar');
+
+        menu_toggle.addEventListener('click', () => {
+            menu_toggle.classList.toggle('is-active');
+            sidebar.classList.toggle('is-active');
+        });
+    </script>
 </body>
 </html>
