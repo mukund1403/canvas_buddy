@@ -1,0 +1,33 @@
+<div class="card">
+    <div class="card-header">
+        <div class="row">
+            <div class="col">Refresh again if data is not updated</div>
+            <div class="col">For Exam Dates, "No Data Available" may mean there is no final exam or the mod is not available this semester</div>
+            <div class="col"></div>
+        </div>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-bordered">
+                <tr>
+                    <th>Module Code</th>
+                    <th>Title</th>
+                    <th>Exam Date</th>
+                    <th>Days to Exam</th>
+                    <th>SU-able?</th>
+                </tr>
+                <% sampleData.forEach(function(data) { %>
+                    <tr>
+                        <td><%= data.moduleCode %></td>
+                        <td><%= data.title %></td>
+                        <td><%= data.examDate %></td>
+                        <td><%= data.examDays %></td>
+                        <td><%= data.SU %></td>
+                                        
+                        <td></td>
+                    </tr>
+                <% }) %>
+            </table>
+        </div>
+    </div>
+</div>

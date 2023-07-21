@@ -1,0 +1,30 @@
+<h2>Mod List</h2>
+
+<div class="card">
+    <div class="card-header">
+        <div class="row">
+            <div class="col">Sample Data</div>
+            <div class="col"></div>
+        </div>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-bordered">
+                <tr>
+                    <th>Module Code</th>
+                    <th>Title</th>
+                    <th>Semester</th>
+                </tr>
+                <% sampleData.forEach(function(data) { %>
+                    <tr>
+                        <td><%= data.moduleCode %></td>
+                        <td><%= data.title %></td>
+                        <td><%= data.semesters %></td>
+                                        
+                        <td></td>
+                    </tr>
+                <% }) %>
+            </table>
+        </div>
+    </div>
+</div>

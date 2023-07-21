@@ -1,6 +1,7 @@
 //get environment variables to work before commiting to github
 //import mysql from 'mysql2'
 const mysql = require('mysql2/promise')
+const mysql1 = require('mysql')
 require('dotenv').config()
 
 
@@ -16,8 +17,34 @@ const pool = mysql.createPool({
     database: process.env.MYSQL_DATABASE 
 })
 
+var connection = mysql1.createConnection({
+    host: '127.0.0.1',
+    user: 'root',
+    password: 'A5zSy2hr%$6f',
+    database: 'nusmods'        
+})
+
+connection.connect(function(error){
+    if (error) {
+        console.error(error)
+    } else {
+        console.log('MySQL DataBase is connected Successfully')
+    } 
+})
 
 
+/*
+async function getModule(module_code){
+    const [rows] = await connection.query(
+        `SELECT *
+        FROM nusmods.modsummary
+        WHERE moduleCode = ?`,[module_code])
+        
+    return rows
+    
+}
+
+*/
 /*async function getAllAssignments(){
     const [rows] = await pool.query("SELECT * FROM assignments")
     console.log(rows)
@@ -51,8 +78,8 @@ async function deleteAssignment(module_code,assignment_name,due_date){
 
 
 
-module.exports = pool
-
+//module.exports = pool
+module.exports = connection
 
   
 

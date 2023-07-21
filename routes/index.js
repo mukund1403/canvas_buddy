@@ -1,7 +1,9 @@
 const express = require('express')
 const router = express()
 const database = require('../databases')
+
 const checkAuthentication = require('./partials/checkAuthentication')  
+
 const passport = require('passport')
 const initializePassport = require('../passport-config')
 initializePassport(passport,
@@ -32,6 +34,7 @@ router.get('/',checkAuthentication.checkAuthenticated, async (req,res)=>{
     }
     res.render("dashboard")
 })
+*/
 
 async function updateRequired(user_id, today_date){
     let [last_login] = await database.query(
@@ -168,5 +171,6 @@ async function fetchCourses(user_id, access_token,res) {
         )
     }
 }
+
 
 module.exports = router
