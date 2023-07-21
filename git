@@ -1,0 +1,52 @@
+[33mcommit 168542c6da87a825c6136926ce70b069cc520e48[m[33m ([m[1;36mHEAD -> [m[1;32mZhong-Heng[m[33m, [m[1;31morigin/Zhong-Heng[m[33m)[m
+Author: Cazh1 <cazh1or2@gmail.com>
+Date:   Fri Jul 14 16:15:19 2023 +0800
+
+    Removed Telebot token lmao
+
+[33mcommit 04fa1f344f086d4492a50c46be51171a9c67d711[m
+Author: Cazh1 <cazh1or2@gmail.com>
+Date:   Fri Jul 14 01:12:42 2023 +0800
+
+    TeleBot that can read from MySQL database
+
+[33mcommit 55a46d8884418e4217d6eb9c34e879251a8d165f[m
+Author: Cazh1 <cazh1or2@gmail.com>
+Date:   Tue Jul 11 03:56:59 2023 +0800
+
+    Some Edits
+
+[33mcommit 5a70301a445da9def8ad72c42d8f31a340bb9087[m
+Author: Cazh1 <cazh1or2@gmail.com>
+Date:   Mon Jul 10 18:03:18 2023 +0800
+
+    NUSMods API
+
+[33mcommit fa32c0cbc682d941c72fab3c188100f821b0b782[m[33m ([m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m
+Merge: 65763f9 e6bda85
+Author: mukund1403 <108778858+mukund1403@users.noreply.github.com>
+Date:   Fri Jun 9 16:27:13 2023 +0800
+
+    Merge pull request #1 from mukund1403/mukund
+    
+    Completed backend
+
+[33mcommit e6bda856a5b1f9cc6b6a3a095879f9fd24a5ce15[m
+Author: Ayagari Mukund <ayagarimukund@Ayagaris-MacBook-Air.local>
+Date:   Fri Jun 9 16:24:02 2023 +0800
+
+    Completed backend
+    
+    Finished setting up complete authentication, preventing duplicate user tokens and all features related to subjects and assignments
+
+[33mcommit 65763f9e7a0d3bd556d6013bbc228b0c77f41f02[m
+Author: Ayagari Mukund <ayagarimukund@Ayagaris-MacBook-Air.local>
+Date:   Mon Jun 5 14:10:27 2023 +0800
+
+    Added access token to env variables
+
+[33mcommit ec753263d874f3372d53c12178c239bebac5a86b[m
+Author: Ayagari Mukund <ayagarimukund@Ayagaris-MacBook-Air.local>
+Date:   Sun Jun 4 13:05:38 2023 +0800
+
+    initial project commit

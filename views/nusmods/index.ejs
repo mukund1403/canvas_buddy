@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>All Mods</title>
+</head>
+<body>
+    <h2>All Mods</h2>
+
+    <form action="/nusmods/search" method="GET">
+        
+    
+        <br>
+        <input type="search" name="moduleCode" placeholder="Search Module Code">
+        <input type="search" name="title" placeholder="Search Module Title">
+        <input type="search" name="semesters" placeholder="Search Module Semester">
+        <button type="submit" value="search">Search</button>
+    </form>
+
+    <div class="card">
+        <div class="card-header">
+            <div class="row">
+                <div class="col">Sample Data</div>
+                <div class="col"></div>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered">
+                    <tr>
+                        <th>Module Code</th>
+                        <th>Title</th>
+                        <th>Semester</th>
+                    </tr>
+                    <% if (sampleData.length > 0) {%>
+                        <% sampleData.forEach(function(data) { %>
+                            <tr>
+                                <td><%= data.moduleCode %></td>
+                                <td><%= data.title %></td>
+                                <td><%= data.semesters %></td>
+                                                
+                                <td></td>
+                            </tr>
+                        <% }) %>
+                    <%} else { %>
+                        <tr>
+                            <td>Module Not Found</td>
+                        </tr>
+                    <% } %>
+                </table>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
