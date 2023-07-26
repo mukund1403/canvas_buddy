@@ -104,7 +104,8 @@ router.get('/modlist', async (req, res) => {
 
 router.get('/sample_data', async (req, res) => {
     
-    var query = "SELECT * FROM userbase.users ORDER BY moduleCode ASC";
+    //var query = "SELECT * FROM userbase.users ORDER BY moduleCode ASC";
+    var query = "SELECT * FROM orbital.nusmods ORDER BY module_code ASC";
     database.query(query,function(error, data){
         if (error) {
             console.error(error)
@@ -112,8 +113,10 @@ router.get('/sample_data', async (req, res) => {
             res.render('nusmods/sample_data', {title:'NUSMods', action:'list', sampleData:data})
         
             for (let i = 0; i < data.length; i++) {
-                const moduleCode = data[i].moduleCode;
-                const url = `https://api.nusmods.com/v2/2023-2024/modules/${moduleCode}.json`;
+                //const moduleCode = data[i].moduleCode;
+                const module_code = data[i].module_code;
+                //const url = `https://api.nusmods.com/v2/2023-2024/modules/${moduleCode}.json`;
+                const url = `https://api.nusmods.com/v2/2023-2024/modules/${module_code}.json`;
             
                 axios.get(url)
                 .then(response => {
@@ -121,7 +124,8 @@ router.get('/sample_data', async (req, res) => {
                     const modTitle = response.data.title;
                     
                     if (Array.isArray(data) && data.length > 0) {
-                        console.log(moduleCode);
+                        console.log(module_code);
+                        //console.log(moduleCode);
                         console.log(response.data.title)
                         var examDate1 = 0;
                         var examDate2 = 0;
@@ -165,15 +169,42 @@ router.get('/sample_data', async (req, res) => {
                             Finals = examDate1;
                         } else {
                             console.log('Exam Date: No Data Available');
-                            Finals = "No Data Available";
+                            //Finals = "No Data Available";
+                            Finals = null;
                         }
                     } else {
                         console.log('No data available.');
                     }
                     
-                    
-                    
-                    
+                    if (Finals != null) {
+                        const currentTime = new Date().getTime()
+                        const futureDate = Date.parse(Finals)
+                        const timeDiff = futureDate - currentTime
+                        if (timeDiff <= 0) {
+                            //console.log(moduleCode,' Exam Day!')
+                        }
+                        //console.log(currentTime)
+                        //console.log(Finals)
+                        //console.log(futureDate)
+                        //console.log(timeDiff)
+                        
+                        days = Math.floor(timeDiff / (1000 * 60 * 60 * 24));
+                        console.log("!!!!!!!!! ", days)
+                        //const interval = setInterval(calcExamDays,100000);
+                    }
+
+                    const updateQuery = 'UPDATE orbital.nusmods SET exam_date = ?, module_title = ?, SU = ?, exam_days = ? WHERE module_code = ?';
+                    database.query(updateQuery,[Finals, modTitle, SU, days, module_code], function(error, data) {
+                    if (error) {
+                        console.error('Error updating data in the database:', error);
+                        return;
+                    }
+                    console.log(`Data for module code ${module_code} updated successfully`);
+                    });
+
+
+                    //Pre-merge, pre orbital.nusmods
+                    /*
                     if (Finals != "No Data Available") {
                         const currentTime = new Date().getTime()
                         const futureDate = Date.parse(Finals)
@@ -199,6 +230,7 @@ router.get('/sample_data', async (req, res) => {
                     }
                     console.log(`Data for module code ${moduleCode} updated successfully`);
                     });
+                    */
 
                 })
                 .catch(error => {

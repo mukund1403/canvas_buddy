@@ -21,7 +21,7 @@ var connection = mysql1.createConnection({
     host: '127.0.0.1',
     user: 'root',
     password: 'A5zSy2hr%$6f',
-    database: 'nusmods'        
+    database: 'orbital'        
 })
 
 connection.connect(function(error){

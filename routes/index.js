@@ -34,7 +34,7 @@ router.get('/',checkAuthentication.checkAuthenticated, async (req,res)=>{
     }
     res.render("dashboard")
 })
-*/
+
 
 async function updateRequired(user_id, today_date){
     let [last_login] = await database.query(
