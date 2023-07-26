@@ -103,8 +103,7 @@ router.get('/modlist', async (req, res) => {
 })
 
 router.get('/sample_data', async (req, res) => {
-    
-    //var query = "SELECT * FROM userbase.users ORDER BY moduleCode ASC";
+
     var query = "SELECT * FROM orbital.nusmods ORDER BY module_code ASC";
     database.query(query,function(error, data){
         if (error) {
@@ -113,9 +112,7 @@ router.get('/sample_data', async (req, res) => {
             res.render('nusmods/sample_data', {title:'NUSMods', action:'list', sampleData:data})
         
             for (let i = 0; i < data.length; i++) {
-                //const moduleCode = data[i].moduleCode;
                 const module_code = data[i].module_code;
-                //const url = `https://api.nusmods.com/v2/2023-2024/modules/${moduleCode}.json`;
                 const url = `https://api.nusmods.com/v2/2023-2024/modules/${module_code}.json`;
             
                 axios.get(url)
@@ -125,13 +122,12 @@ router.get('/sample_data', async (req, res) => {
                     
                     if (Array.isArray(data) && data.length > 0) {
                         console.log(module_code);
-                        //console.log(moduleCode);
                         console.log(response.data.title)
                         var examDate1 = 0;
                         var examDate2 = 0;
                         var Finals = 0;
                         var SU = "Nah, sorry bro";
-                        var days = "Not applicable"
+                        var days = "0"
 
                         if (response.data.attributes && response.data.attributes.hasOwnProperty("su")) {
                             SU = "Yessir"
@@ -201,36 +197,6 @@ router.get('/sample_data', async (req, res) => {
                     }
                     console.log(`Data for module code ${module_code} updated successfully`);
                     });
-
-
-                    //Pre-merge, pre orbital.nusmods
-                    /*
-                    if (Finals != "No Data Available") {
-                        const currentTime = new Date().getTime()
-                        const futureDate = Date.parse(Finals)
-                        const timeDiff = futureDate - currentTime
-                        if (timeDiff <= 0) {
-                            console.log(moduleCode,' Exam Day!')
-                        }
-                        //console.log(currentTime)
-                        //console.log(Finals)
-                        //console.log(futureDate)
-                        //console.log(timeDiff)
-                        
-                        days = Math.floor(timeDiff / (1000 * 60 * 60 * 24));
-                        console.log("!!!!!!!!! ", days)
-                        //const interval = setInterval(calcExamDays,100000);
-                    }
-
-                    const updateQuery = 'UPDATE userbase.users SET examDate = ?, title = ?, SU = ?, examDays = ? WHERE moduleCode = ?';
-                    database.query(updateQuery,[Finals, modTitle, SU, days, moduleCode], function(error, data) {
-                    if (error) {
-                        console.error('Error updating data in the database:', error);
-                        return;
-                    }
-                    console.log(`Data for module code ${moduleCode} updated successfully`);
-                    });
-                    */
 
                 })
                 .catch(error => {

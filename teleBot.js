@@ -4,204 +4,311 @@ const axios = require('axios');
 const bodyParser = require('body-parser');
 const database = require('./databases')
 const mysql = require('mysql')
-const telegramBot = require('node-telegram-bot-api')
+//const telegramBot = require('node-telegram-bot-api')
+const {Telegraf} = require('telegraf')
+const {message} = require('telegraf/filters');
+const { reset } = require('nodemon');
+//const { callback } = require('telegraf/typings/button');
+//const { callback } = require('telegraf/typings/button');
+
 require('dotenv').config()
 
 const port = 8080;
 const url = 'https://api.telegram.org/bot';
 const apiToken = process.env.TELEBOT_API_TOKEN ;
 
-const bot = new telegramBot (apiToken, {polling:true})
+//const bot = new telegramBot (apiToken, {polling:true})
+const bot = new Telegraf(apiToken)
 let reminder;
+let registered = 0;
+
+/*
+const stage = new Scenes.Stage([start, about, settings, contact, search]); // Register our scenes
+bot.use(stage.middleware()); // Stage middleware
+bot.hears("settings", Scenes.Stage.enter("settings")); // Entering the settings scene when listener worked
+*/
 
 //bot.sendMessage(chat.id, text="Hi there!")
 //Event listener for start
 
-bot.onText(/\/start/, (msg) => {
-    bot.sendMessage(msg.chat.id, 
-`Hi there! I am Canvas Helper Bot.
+bot.start((ctx) => {
+    let message = ` Hi there! I am Canvas Helper Bot.
 Type /help if you need any help
-
-${msg.chat.username}`)
+${ctx.chat.username}`
+    ctx.reply(message)
+    const sql = `SELECT * FROM orbital.users WHERE tele_username LIKE '${ctx.chat.username}'`;
+        database.query(sql, function(err, results) {
+            if(err) console.log(err);
+            //console.log(results);
+                if (results == 0) {
+                    ctx.reply("Hey, it looks like you have not registered with us yet. Head over to CanvasHelper.com and register for the best user experience!")
+                } else {
+                    ctx.reply(`Hi there! Welcome ${ctx.chat.username}`)
+                    registered = 1;
+                }   
+        })
 });
 
-bot.onText(/\/remind/,(msg,match)=>{
-    bot.sendMessage(
-       msg.chat.id,
-       `Hello! ${msg.chat.first_name}, What do you want to be reminded of? [Start next message with /save]`
-        )
-        .then(res => {
-           //For save
-           bot.onText(/\/save (.+)/, (message, match)=>{
-             reminder = match[1];
-             if(reminder){
-               bot.sendMessage(
-                 message.chat.id, `Got it! What time? [example: /time (HH:MM:SS:AM|PM)]`
-                 )
-                 .then(() => {
-                   bot
-                     .onText(/\/time ([01]\d|2[0-3]):([0-5]\d:[0-5]\d):(AM|PM)/,(message,match)=>{
-                          const time = match[0].split(' ')[1];
-                          bot.sendMessage(
-                              message.chat.id,
-                              `Thank you ${message.chat.first_name}, your reminder for time ${time} has been saved.`
-                          );
-                      }) 
-                              
-                   })
-                   .catch(() =>{
-                       bot.sendMessage(msg.chat.id,`Oops! An error has occured. Try again`);
-                    })
-              }
-          });
-        }) 
-        .catch(e => {
-            bot.sendMessage(msg.chat.id,`Oops! An error has occured. Try again`);
-        }) 
-});
+bot.hears('hi', (ctx) => ctx.reply('Hey there'))
 
-
-bot.on('message',(msg)=>{
-    var hello = "hello";
-    var hi
-    if (msg.text.toString().toLowerCase().indexOf(hi) === 0) {
-        bot.sendMessage(msg.chat.id, `Hello ${msg.chat.first_name}, What can I do for you today?`)
-    }
-    var bye = "bye";
-    if (msg.text.toString().toLowerCase().includes(bye)) {
-        bot.sendMessage(msg.chat.id, "Hope to see you around again , Bye");
+bot.command('fact', async (ctx) => {
+    try {
+        ctx.reply('Generating image, Please wait !!!')
+        let imagePath = `./temp/${uuidV4()}.jpg`
+        await factGenerator.generateImage(imagePath)
+        await ctx.replyWithPhoto({ source: imagePath })
+        factGenerator.deleteImage(imagePath)
+    } catch (error) {
+        console.log('error', error)
+        ctx.reply('error sending image')
     }
 });
 
-bot.onText(/\/help/, (msg) => {
-    bot.sendMessage(msg.chat.id, `Sure, No problem!
-Type /search to search for a particular module
-Type /search2 for a pop-up window with all your modules
+bot.command('help', async (ctx) => {
+    ctx.reply(`
+Sure, No problem!
+Type /search (module code) to search for a particular module
+Type /all for a pop-up window with all your modules
 Type /exams to see all your exam dates`)
 });
 
-bot.onText(/\/search/,(msg,match)=>{
-    bot.sendMessage(
-      msg.chat.id,
-      `Hello! ${msg.chat.first_name}, What are you searching for?`
-    )
-    .then(res => {
-        //for save
-        bot.on('message', (msg) => {
-            const q = msg.text //here I recieve a message to bot as a string to use in select
-            //const sql = "SELECT examDate, moduleCode FROM userbase.users WHERE moduleCode LIKE '%"+ q +"%'";
+bot.command('search', async (ctx) => {
+    //ctx.reply(`Hello! ${ctx.chat.first_name}, What are you searching for?`)
+    if (registered == 1) {
+        try {
+            const msg = ctx.message.text //here I recieve a message to bot as a string to use in select
+            msgAray = msg.split(' ')
+            msgAray.shift()
+            q = msgAray.join()
+            console.log(q)
             const sql = "SELECT exam_date, module_code FROM orbital.nusmods WHERE module_code LIKE '%"+ q +"%'";
-            //const sql2 = "SELECT moduleCode FROM userbase.users WHERE moduleCode LIKE '%"+ q +"%'";
             database.query(sql, function(err, results) {
                 if(err) console.log(err);
                 console.log(results);
                 
                 for (const result of results) { // each row
-                    bot.sendMessage(
-                        msg.chat.id,
-                        //`The exam date for ${result.moduleCode} is ${result.examDate}`
-                        `The exam date for ${result.module_code} is ${result.exam_date}`
-                        )
+                    ctx.reply(`The exam date for ${result.module_code} is ${result.exam_date}`)
                 }
-            });
-        })
-    }) 
-    .catch(e => {
-        bot.sendMessage(msg.chat.id,`Oops! An error has occured. Try again`);
-    }) 
-});
-
-bot.onText(/\/exams/, (msg) => {
-    //const sql = "SELECT moduleCode, examDate FROM userbase.users";
-    const sql = "SELECT module_code, exam_date FROM orbital.nusmods";
-    database.query(sql, function(err, results) {
-        if(err) console.log(err);
-        console.log(results);
-        let i = 0
-        for (const result of results) { // each row
-            bot.sendMessage(
-                msg.chat.id,
-                //`The exam date for ${result.moduleCode} is ${result.examDate}`
-                `The exam date for ${result.module_code} is ${result.exam_date}`
-                )
+            })
+        } catch (error) {
+            console.log('error', error)
+            ctx.reply('error searching module')
         }
-    });
+    } else {
+        ctx.reply('Hey, PLEASE register first before using (╯°□°)╯︵ ┻━┻')
+    }
 });
 
-bot.onText(/\/search2/, (msg) => {
-    //const sql = "SELECT moduleCode, examDate FROM userbase.users";
-    const sql = "SELECT module_code, exam_date FROM orbital.nusmods";
-    database.query(sql, function(err, results) {
-        if(err) console.log(err);
-        console.log(results);
-        let i = 0
-        //bot.sendMessage(msg.chat.id,`${results[1].moduleCode}`)
-        /*
-        for (const result of results) { // each row
-            bot.sendMessage(
-                msg.chat.id,
-                `The exam date for ${result.moduleCode} is ${result.examDate}`
-                )
-        }       
-        */
+bot.command('all', async (ctx) => {
+    if (registered == 1) {
+        try {
+            const sql = "SELECT module_code, ID FROM orbital.nusmods";
+            database.query(sql, function(err, results) {
+                if(err) console.log(err);
+                console.log(results);
+                let i = 0
+                const module_keyboard = {
+                    "reply_markup": {
+                        "resize_keyboard": true,
+                        "one_time_keyboard": true,
+                        "inline_keyboard": results.map(result => ([{text: result.module_code, callback_data: result.ID}])) 
+                        //"inline_keyboard": [[{text:"Mod 1", callback_data:'cat'}], [{text:"Mod 2", callback_data:"camp"}]]
+                    }   
+                }
+                //console.log(module_keyboard)
+                console.log(allModuleKeyboard)
+                bot.telegram.sendMessage(ctx.chat.id, "Click for exam dates", module_keyboard);
+            });
+        } catch (error) {
+            console.log('error', error)
+            ctx.reply('error showing all')
+        }
+        const msg = ctx.message.text
+        console.log(msg)
+    } else {
+        ctx.reply('Hey, PLEASE register first before using (╯°□°)╯︵ ┻━┻')
+    }
+    
+});
 
-        bot.sendMessage(msg.chat.id, "Click for exam dates", {
-            "reply_markup": {
-                //"inline_keyboard": [[{text:"Exam Dates" , callback_data:"www.google.com"}], [{text:"Assignments", url:"www.youtube.com"}]]
-                "resize_keyboard": true,
-                "one_time_keyboard": true,
-                //"keyboard": [[`${results[0].moduleCode}`, `${results[1].moduleCode}`],   [`${results[2].moduleCode}`], [`${results[3].moduleCode}`], [`${results[4].moduleCode}`]]
-                //"keyboard": [[`${results[0].module_code}`, `${results[1].module_code}`],   [`${results[2].module_code}`], [`${results[3].module_code}`], [`${results[4].module_code}`]]
-                "keyboard": [[`${results[0].module_code}`]]
+const allModuleKeyboard = {
+    "reply_markup": {
+        "one_time_keyboard": true,
+        "keyboard": [
+            [{
+                text: "My phone number",
+                request_contact: true,
+                one_time_keyboard: true
+            }],
+            [{text:"Cancel", callback_data:'cat'}]
+        ]
+    }
+};
+
+//Response to the /all search. Inefficient AF but ¯\_(ツ)_/¯
+bot.action('1', ctx => {
+    try {
+        const sql = `SELECT module_code, exam_date FROM orbital.nusmods WHERE ID LIKE '1'`;
+        database.query(sql, function(err, results) {
+            if(err) console.log(err);
+            console.log(results);
+            for (const result of results) { // each row
+                if (result.exam_date == null) {
+                    ctx.reply(`No exams for ${result.module_code}. Yay!`)
+                } else {
+                ctx.reply(`The exam date for ${result.module_code} is ${result.exam_date}`)
+                }
             }
         });
-        
-        /*
-        bot.editMessageReplyMarkup(msg.chat.id, "Exam Dates", {
-            "reply_markup": {
-                "keyboard": [[`${results[0].moduleCode}`, `${results[1].moduleCode}`],   [`${results[2].moduleCode}`], [`${results[3].moduleCode}`], [`${results[4].moduleCode}`]]
-            }
-        })*/
-    });
-});
-/*
-bot.on('callback_query', (msg) => {
-    bot.editMessageReplyMarkup({
-        reply_markup:{
-            inline_keyboard: [
-                [{text:"Exam Dates" , callback_data:"www.google.com"}]
-            ]
-        }
-    })
+    } catch (error) {
+        console.log('error', error)
+        ctx.reply('error sending image')
+    }
 })
-*/
-/*
-$keyboard1 = [
-    ['7', '8', '9'],
-    ['4', '5', '6'],
-    ['1', '2', '3'],
-         ['0']
-];
 
-$reply_markup = $telegram->replyKeyboardMarkup([
-    'keyboard' => $keyboard1, 
-    'resize_keyboard' => true, 
-    'one_time_keyboard' => true
-]);
+bot.action('2', ctx => {
+    try {
+        const sql = "SELECT module_code, exam_date FROM orbital.nusmods WHERE ID LIKE '2'";
+        database.query(sql, function(err, results) {
+            if(err) console.log(err);
+            console.log(results);
+            for (const result of results) { // each row
+                if (result.exam_date == null) {
+                    ctx.reply(`No exams for ${result.module_code}. Yay!`)
+                } else {
+                ctx.reply(`The exam date for ${result.module_code} is ${result.exam_date}`)
+                }
+            }
+        });
+    } catch (error) {
+        console.log('error', error)
+        ctx.reply('error sending image')
+    }
+})
 
-$response = $telegram->sendMessage([
-    'chat_id' => 'CHAT_ID', 
-    'text' => 'Hello World', 
-    'reply_markup' => $reply_markup
-]);
+bot.action('3', ctx => {
+    try {
+        const sql = "SELECT module_code, exam_date FROM orbital.nusmods WHERE ID LIKE '3'";
+        database.query(sql, function(err, results) {
+            if(err) console.log(err);
+            console.log(results);
+            for (const result of results) { // each row
+                if (result.exam_date == null) {
+                    ctx.reply(`No exams for ${result.module_code}. Yay!`)
+                } else {
+                ctx.reply(`The exam date for ${result.module_code} is ${result.exam_date}`)
+                }
+            }
+        });
+    } catch (error) {
+        console.log('error', error)
+        ctx.reply('error sending image')
+    }
+})
 
-$messageId = $response->getMessageId();
-var option = {
-    "parse_mode": "Markdown",
-    "reply_markup": {  "keyboard": [["Yes"],["No"]]  }
-};
-bot.sendMessage(msg.chat.id, "*Some* message here.", option);
-*/
+bot.action('4', ctx => {
+    try {
+        const sql = "SELECT module_code, exam_date FROM orbital.nusmods WHERE ID LIKE '4'";
+        database.query(sql, function(err, results) {
+            if(err) console.log(err);
+            console.log(results);
+            for (const result of results) { // each row
+                if (result.exam_date == null) {
+                    ctx.reply(`No exams for ${result.module_code}. Yay!`)
+                } else {
+                ctx.reply(`The exam date for ${result.module_code} is ${result.exam_date}`)
+                }
+            }
+        });
+    } catch (error) {
+        console.log('error', error)
+        ctx.reply('error sending image')
+    }
+})
+
+bot.action('5', ctx => {
+    try {
+        const sql = "SELECT module_code, exam_date FROM orbital.nusmods WHERE ID LIKE '5'";
+        database.query(sql, function(err, results) {
+            if(err) console.log(err);
+            console.log(results);
+            for (const result of results) { // each row
+                if (result.exam_date == null) {
+                    ctx.reply(`No exams for ${result.module_code}. Yay!`)
+                } else {
+                ctx.reply(`The exam date for ${result.module_code} is ${result.exam_date}`)
+                }
+            }
+        });
+    } catch (error) {
+        console.log('error', error)
+        ctx.reply('error sending image')
+    }
+})
+
+bot.action('6', ctx => {
+    try {
+        const sql = "SELECT module_code, exam_date FROM orbital.nusmods WHERE ID LIKE '6'";
+        database.query(sql, function(err, results) {
+            if(err) console.log(err);
+            console.log(results);
+            for (const result of results) { // each row
+                if (result.exam_date == null) {
+                    ctx.reply(`No exams for ${result.module_code}. Yay!`)
+                } else {
+                ctx.reply(`The exam date for ${result.module_code} is ${result.exam_date}`)
+                }
+            }
+        });
+    } catch (error) {
+        console.log('error', error)
+        ctx.reply('error sending image')
+    }
+})
+
+bot.action('7', ctx => {
+    try {
+        const sql = "SELECT module_code, exam_date FROM orbital.nusmods WHERE ID LIKE '7'";
+        database.query(sql, function(err, results) {
+            if(err) console.log(err);
+            console.log(results);
+            for (const result of results) { // each row
+                if (result.exam_date == null) {
+                    ctx.reply(`No exams for ${result.module_code}. Yay!`)
+                } else {
+                ctx.reply(`The exam date for ${result.module_code} is ${result.exam_date}`)
+                }
+            }
+        });
+    } catch (error) {
+        console.log('error', error)
+        ctx.reply('error sending image')
+    }
+})
+
+bot.action('8', ctx => {
+    try {
+        const sql = "SELECT module_code, exam_date FROM orbital.nusmods WHERE ID LIKE '8'";
+        database.query(sql, function(err, results) {
+            if(err) console.log(err);
+            console.log(results);
+            for (const result of results) { // each row
+                if (result.exam_date == null) {
+                    ctx.reply(`No exams for ${result.module_code}. Yay!`)
+                } else {
+                ctx.reply(`The exam date for ${result.module_code} is ${result.exam_date}`)
+                }
+            }
+        });
+    } catch (error) {
+        console.log('error', error)
+        ctx.reply('error sending image')
+    }
+})
+
+//Launch if not bot no work =͟͟͞͞( ✌°∀° )☛
+bot.launch();
+
 // Listening
 app.listen(port, () => {
      console.log(`TeleBot Listening on port ${port}`);
