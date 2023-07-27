@@ -38,6 +38,7 @@ Type /start to restart the bot
 Type /all for a pop-up window with all your modules
 Type /exams to see all your exam dates
 Type /assignments to see all your outstanding assignments (NOT WORKING)
+
 Use the Menu (BLUE BUTTON) here for to see commands
  ⬇️
 `)
