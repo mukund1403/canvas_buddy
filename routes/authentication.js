@@ -31,11 +31,15 @@ router.use(function(req, res, next) {
     next();
   });
 
-router.get('/',checkAuthentication.checkNotAuthenticated,(req,res)=>{
+router.get('/',
+//checkAuthentication.checkNotAuthenticated,
+(req,res)=>{
     res.render('authentication/login') 
 })
 
-router.get('/register',checkAuthentication.checkNotAuthenticated,(req,res)=>{
+router.get('/register',
+checkAuthentication.checkNotAuthenticated,
+(req,res)=>{
     const errorMessage = req.query.errorMessage
     res.render('authentication/register',{errorMessage:errorMessage}) 
 })
@@ -44,7 +48,9 @@ router.get('/generateToken',checkAuthentication.checkNotAuthenticated,(req,res)=
     res.render('authentication/generateToken')
 })
 
-router.post('/register', checkAuthentication.checkNotAuthenticated, async(req,res)=>{
+router.post('/register', 
+//checkAuthentication.checkNotAuthenticated, 
+async(req,res)=>{
     let user_id = null;
     try{
         const hashedPassword = await bcrypt.hash(req.body.password,10)
@@ -73,7 +79,9 @@ router.post('/register', checkAuthentication.checkNotAuthenticated, async(req,re
     }
 })
 
-router.post('/authentication', checkAuthentication.checkNotAuthenticated, passport.authenticate('local',{
+router.post('/authentication', 
+//checkAuthentication.checkNotAuthenticated, 
+passport.authenticate('local',{
     successRedirect: '/index?loggedIn=' + encodeURIComponent('yes'),
     failureRedirect: '/',
     failureFlash: true

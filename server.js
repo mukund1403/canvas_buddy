@@ -8,12 +8,12 @@ const session = require('express-session')
 const passport = require('passport')
 
 //TeleBot
-const TeleBot = require('./TeleBot/teleBot')
+const TeleBot = require('./teleBot')
 
 const authenticationRouter = require('./routes/authentication')
 const indexRouter = require('./routes/index')
 const nusmodsRouter = require('./routes/nusmods')
-//const subjectRouter = require('./routes/subjects')
+const subjectRouter = require('./routes/subjects')
 //const assignmentsRouter = require('./routes/assignments') 
 const methodOverride = require('method-override')
 require('dotenv').config()
@@ -35,10 +35,10 @@ app.use(passport.initialize())
 app.use(passport.session())
 app.use(methodOverride('_method'))
 
-app.use('/',authenticationRouter)
+//app.use('/',authenticationRouter)
 app.use('/',indexRouter)
 app.use('/nusmods',nusmodsRouter)
-//app.use('/subjects',subjectRouter)
+app.use('/subjects',subjectRouter)
 //app.use('/assignments',assignmentsRouter)
 
 app.listen(process.env.PORT || 3000, ()=>{

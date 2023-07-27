@@ -3,8 +3,9 @@ const router = express()
 const database = require('../databases')
 const checkAuthentication = require('./partials/checkAuthentication') 
 
-const passport = require('passport')
-const initializePassport = require('../passport-config')
+//const passport = require('passport')
+//const initializePassport = require('../passport-config')
+/*
 initializePassport(passport,
     async (email) => await database.query(
         `SELECT *
@@ -22,8 +23,10 @@ router.use(function(req, res, next) {
     res.set('Cache-Control', 'no-cache, private, no-store, must-revalidate, max-stale=0, post-check=0, pre-check=0');
     next();
   });
-
-router.get('/',checkAuthentication.checkAuthenticated, async (req,res)=>{
+*/
+router.get('/',
+//checkAuthentication.checkAuthenticated, 
+async (req,res)=>{
     try{
         const [user] = await req.user
         const user_id = user[0].user_id
@@ -33,24 +36,29 @@ router.get('/',checkAuthentication.checkAuthenticated, async (req,res)=>{
             WHERE user_id = ?`,[user_id]
         )
         res.render("subjects/index",{subjects:subjects})
-    } catch{
+    } catch(err) {
+        console.log(err)
         res.redirect('/')
     }
     
 })
 
 
-router.get('/:id',checkAuthentication.checkAuthenticated, async (req,res)=>{
+router.get('/:id',
+//checkAuthentication.checkAuthenticated, 
+async (req,res)=>{
     try{
         const module_code = req.params.id
         res.render("subjects/show",{module_code:module_code})
-    }catch{
+    }catch(err){
         res.redirect('/subjects')
     }
     
 })
 
-router.get('/:id/assignments',checkAuthentication.checkAuthenticated, async (req,res)=>{
+router.get('/:id/assignments',
+//checkAuthentication.checkAuthenticated, 
+async (req,res)=>{
     try{
         const [user] = await req.user
         const user_id = user[0].user_id
