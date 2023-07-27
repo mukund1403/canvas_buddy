@@ -8,7 +8,7 @@ const session = require('express-session')
 const passport = require('passport')
 
 //TeleBot
-const TeleBot = require('./teleBot')
+const TeleBot = require('./TeleBot/teleBot')
 
 const authenticationRouter = require('./routes/authentication')
 const indexRouter = require('./routes/index')
