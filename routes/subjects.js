@@ -73,6 +73,24 @@ router.get('/:id/assignments',checkAuthentication.checkAuthenticated, async (req
     
 })
 
+router.get('/:id/exams',checkAuthentication.checkAuthenticated, async (req,res)=>{
+    try{
+        const [user] = await req.user
+        const user_id = user[0].user_id
+        const module_code = req.params.id
+        const [examData] = await database.query(
+            `SELECT * 
+            FROM nusmods 
+            WHERE user_id = ? AND module_code = ?` , [user_id,module_code]
+        )
+        res.render('subjects/exams', {title:'NUSMods', action:'list', examData:examData, module_code: module_code})
+    }catch(err){
+        res.redirect('/subjects')
+        console.log(err)
+    }
+    
+})
+
 function findDaysLeft(assignments){
     assignments.forEach(assignment =>{
         let today_date = new Date()

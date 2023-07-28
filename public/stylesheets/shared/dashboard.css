@@ -32,7 +32,7 @@
     margin: 50px auto;
     width:400px;
     height:400px;
-    display:grid;
+    display:flex;
     grid-template-columns: 600px 600px;
     grid-row: auto auto;
     grid-column-gap: 30px;
