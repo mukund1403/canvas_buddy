@@ -1,7 +1,8 @@
 const express = require('express')
 const router = express()
 const database = require('../databases')
-const checkAuthentication = require('./partials/checkAuthentication')  
+const checkAuthentication = require('./partials/checkAuthentication')
+const axios = require('axios')  
 const passport = require('passport')
 const initializePassport = require('../passport-config')
 initializePassport(passport,
@@ -24,9 +25,10 @@ router.get('/',checkAuthentication.checkAuthenticated, async (req,res)=>{
         let today_date = new Date()
         if(await updateRequired(user_id,today_date)){
             const token = await getToken(user_id)
+            const data = await getData(user_id)
             const deletedSubjects = await deleteSubjects(user_id)
             const deletedAssignments = await deleteAssignments(user_id)
-            const deleteExams = await deleteModules(user_id)
+            const deleteE = await deleteExams(user_id)
             const updatedAPIDate = await updateAPIDate(user_id,today_date)
             const courses = await fetchCourses(user_id, token, res)
             const exam = await examAPI(data,user_id)
@@ -170,7 +172,7 @@ async function fetchCourses(user_id, access_token,res) {
     }
 }
 
-async function examAPI(data,user_id){      
+async function examAPI(data,user_id){   
     data.forEach(subject =>{  
         const module_code = subject.module_code;
         const url = `https://api.nusmods.com/v2/2023-2024/modules/${module_code}.json`;
@@ -269,13 +271,22 @@ async function updateCall(Finals, modTitle, SU, days, module_code, user_id) {
             VALUES (?,?,?,?,?,?)`
             ,[module_code, modTitle, Finals, days, SU, user_id]
         )
-        //console.log(`Data for module code ${module_code} updated successfully`);
+        console.log("exam added")
+        
     
     } catch(err) {
-        //console.log('Failed to update table',err)
         console.log(err)
         
     }
+}
+
+async function getData(user_id){
+    const [data] = await database.query(
+        `SELECT module_code 
+        FROM subjects 
+        WHERE user_id = ?` , [user_id]
+    )
+    return data   
 }
 
 async function deleteExams(user_id){

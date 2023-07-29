@@ -1,7 +1,7 @@
 const express = require('express')
 const router = express()
 const database = require('../databases')
-const axios = require('axios')
+
 
 const checkAuthentication = require('./partials/checkAuthentication')
 const bcrypt = require('bcrypt')
@@ -30,11 +30,6 @@ if (typeof document !== 'undefined') {
 router.get('/', checkAuthentication.checkAuthenticated, async (req, res) => {
     try{
         const user_id = await getUser(req)
-        const [data] = await database.query(
-            `SELECT module_code 
-            FROM subjects 
-            WHERE user_id = ?` , [user_id]
-        )
         const [examData] = await database.query(
             `SELECT * 
             FROM nusmods 
