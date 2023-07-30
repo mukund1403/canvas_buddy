@@ -3,11 +3,12 @@
   "version": "1.0.0",
   "description": "",
   "main": "server.js",
-  "engines" : {
-    "node" : "18.x"
+  "engines": {
+    "node": "18.x"
   },
   "scripts": {
     "build": "node server.js",
+    "start" : "node server.js",
     "devStart": "nodemon server.js"
   },
   "keywords": [],
