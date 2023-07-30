@@ -1,3 +1,7 @@
+if(process.env !== 'production'){
+    require('dotenv').config()
+}
+
 const express = require('express')
 
 
@@ -14,7 +18,7 @@ const subjectRouter = require('./routes/subjects')
 const assignmentsRouter = require('./routes/assignments') 
 const nusmodsRouter = require('./routes/nusmods') 
 const methodOverride = require('method-override')
-require('dotenv').config()
+
 
 app.set('view engine','ejs');
 app.set('views',__dirname+"/views")
