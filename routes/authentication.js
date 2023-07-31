@@ -60,7 +60,8 @@ router.post('/register', checkAuthentication.checkNotAuthenticated, async(req,re
             )
             user_id = id_object[0].LI
             const courses =  await fetchCourses(user_id, req.body.token,res)
-        } catch{
+        } catch(err){
+            console.log(err)
             var string = encodeURIComponent('Duplicate token! If already registered then Log in. Otherwise generate your own token.');
             res.redirect('/register?errorMessage=' + string)
         }
