@@ -47,6 +47,7 @@ async function updateRequired(user_id, today_date){
     let today_year = today_date.getFullYear()
     let today_month= today_date.getMonth() + 1
     let today_day = today_date.getDate()
+    if(last_login[0].login_date == null) return true
     date_arr = last_login[0].login_date.split("-")
     let login_year = parseInt(date_arr[0])
     let login_month = parseInt(date_arr[1])
