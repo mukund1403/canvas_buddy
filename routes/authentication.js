@@ -53,16 +53,11 @@ router.post('/register', checkAuthentication.checkNotAuthenticated, async(req,re
                 `INSERT INTO users(name,email,password,token)
                 VALUES (?,?,?,?)`,[req.body.name,req.body.email,hashedPassword,req.body.token]
             )
-            const [id_object] = await database.query(
-                `SELECT LAST_INSERT_ID(user_id) AS LI
-                FROM users 
-                ORDER BY LAST_INSERT_ID(user_id) desc limit 1`
-            )
-            user_id = id_object[0].LI
-            const courses =  await fetchCourses(user_id, req.body.token,res)
+            var string = encodeURIComponent('Successfully registered');
+            res.redirect('/register?errorMessage=' + string)
         } catch(err){
             console.log(err)
-            var string = encodeURIComponent('Duplicate token! If already registered then Log in. Otherwise generate your own token.');
+            var string = encodeURIComponent('Duplicate or incorrect token! If already registered then Log in. Otherwise generate your own token.');
             res.redirect('/register?errorMessage=' + string)
         }
         
